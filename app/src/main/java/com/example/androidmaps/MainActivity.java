@@ -18,14 +18,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseUser user;
-    private FirebaseAuth auth;
+    //private FirebaseAuth auth;
 
     private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = auth.getCurrentUser();
+        /*user = auth.getCurrentUser();
         auth = FirebaseAuth.getInstance();
         if (user == null) {
             Intent intent = new Intent(getApplicationContext(), Register.class);
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        });
+        });*/
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
