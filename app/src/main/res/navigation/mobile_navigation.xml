@@ -27,4 +27,5 @@
         android:name="com.example.androidmaps.ui.register.RegisterFragment"
         android:label="activity_register"
         tools:layout="@layout/activity_register" />
+
 </navigation>

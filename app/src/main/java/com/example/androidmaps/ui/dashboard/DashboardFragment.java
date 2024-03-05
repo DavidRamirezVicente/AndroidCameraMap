@@ -2,6 +2,7 @@ package com.example.androidmaps.ui.dashboard;
 
 import android.Manifest;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,7 +30,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.androidmaps.R;
 import com.example.androidmaps.databinding.FragmentDashboardBinding;
+import com.example.androidmaps.ui.SharedViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -50,6 +53,7 @@ public class DashboardFragment extends Fragment {
     private Uri lastPhotoUri;
     private FirebaseFirestore firestore;
     private int cameraFacing = CameraSelector.LENS_FACING_BACK;
+    private SharedViewModel sharedViewModel;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -72,6 +76,7 @@ public class DashboardFragment extends Fragment {
         minatura= binding.imageView2;
         minatura.setVisibility(View.INVISIBLE);
         flipCamera = binding.rotate;
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         startCamera(cameraFacing);
 
@@ -85,6 +90,21 @@ public class DashboardFragment extends Fragment {
                 }
             }
         });
+        minatura.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (minatura.getTag() != null) {
+                    Uri imageUri = (Uri) minatura.getTag();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(imageUri, "image/*");
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(requireContext(), "No hay imagen disponible", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         flipCamera.setOnClickListener(view -> {
 
             cameraFacing = (cameraFacing == CameraSelector.LENS_FACING_BACK) ?
@@ -141,13 +161,13 @@ public class DashboardFragment extends Fragment {
                 }
             }
         }, ContextCompat.getMainExecutor(requireContext()));
-        /*if (lastPhotoUri != null) {
+        if (lastPhotoUri != null) {
             minatura.setVisibility(View.VISIBLE);
             minatura.setImageURI(lastPhotoUri);
             minatura.setTag(lastPhotoUri);
         } else {
-            minatura.setVisibility(View.GONE);
-        }*/
+            minatura.setVisibility(View.INVISIBLE);
+        }
     }
     private void capturePhoto() {
         if (imageCapture == null) {
@@ -170,11 +190,16 @@ public class DashboardFragment extends Fragment {
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                         minatura.setVisibility(View.VISIBLE);
                         Toast.makeText(requireContext(), "Foto guardada exitosamente", Toast.LENGTH_SHORT).show();
+                        int targetWidth = getResources().getDimensionPixelSize(R.dimen.imageview_width);
+                        int targetHeight = getResources().getDimensionPixelSize(R.dimen.imageview_height);
+
                         Uri saveURI = outputFileResults.getSavedUri();
                         minatura.setImageURI(saveURI);
                         minatura.setTag(saveURI);
                         lastPhotoUri = saveURI;
+
                         uploadImageToFirestore(saveURI);
+                        sharedViewModel.setPhotoUri(saveURI);
                     }
 
 
