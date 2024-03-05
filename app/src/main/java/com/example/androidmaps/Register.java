@@ -1,3 +1,4 @@
+/*
 package com.example.androidmaps;
 
 import static android.content.ContentValues.TAG;
@@ -90,3 +91,4 @@ public class Register extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 }
+*/

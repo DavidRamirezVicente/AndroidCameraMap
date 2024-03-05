@@ -3,20 +3,77 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.dashboard.DashboardFragment">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_dashboard"
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:layout_editor_absoluteY="640dp">
+
+    </androidx.camera.view.PreviewView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+
+            <ImageButton
+                android:id="@+id/rotate"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:backgroundTint="#00FFFFFF"
+                android:scaleType="fitXY"
+                android:src="@drawable/baseline_flip_camera_android_24"
+                app:tint="@color/black" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="585dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:srcCompat="@drawable/ic_launcher_background" />
+
+            <Space
+                android:layout_width="116dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0" />
+
+            <ImageButton
+                android:id="@+id/photo"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:scaleType="fitXY"
+                android:src="@drawable/baseline_camera_24" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
