@@ -1,4 +1,3 @@
-/*
 package com.example.androidmaps;
 
 import static android.content.ContentValues.TAG;
@@ -85,10 +84,9 @@ public class Register extends AppCompatActivity {
             }
         });
     }
-
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 }
-*/
+
