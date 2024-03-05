@@ -7,7 +7,7 @@
     android:background="@drawable/loginbkg"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".Register"
+    tools:context=".ui.register.RegisterFragment"
     android:id="@+id/registerPage">
 
     <androidx.cardview.widget.CardView

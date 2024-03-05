@@ -1,4 +1,5 @@
-package com.example.androidmaps;
+
+package com.example.androidmaps.ui.register;
 
 import static android.content.ContentValues.TAG;
 
@@ -14,13 +15,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.androidmaps.MainActivity;
+import com.example.androidmaps.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-public class Register extends AppCompatActivity {
+public class RegisterFragment extends AppCompatActivity {
 
     private TextInputEditText editTextEmail, editTextPassword;
     private Button registerButton;
@@ -56,11 +59,11 @@ public class Register extends AppCompatActivity {
                 password = String.valueOf(editTextPassword.getText());
 
                 if (TextUtils.isEmpty(email)){
-                    Toast.makeText(Register.this, "Enter email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterFragment.this, "Enter email", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(password)){
-                    Toast.makeText(Register.this, "Enter password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterFragment.this, "Enter password", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -69,14 +72,14 @@ public class Register extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(Register.this, "Authentication created.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterFragment.this, "Authentication created.", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(Register.this, "Authentication failed.",
+                                    Toast.makeText(RegisterFragment.this, "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -84,9 +87,9 @@ public class Register extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 }
-
