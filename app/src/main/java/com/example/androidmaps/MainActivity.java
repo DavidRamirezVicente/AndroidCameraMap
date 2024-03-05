@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.androidmaps.ui.register.RegisterFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,13 +26,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = auth.getCurrentUser();
         auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
         if (user == null) {
-            Intent intent = new Intent(getApplicationContext(), Register.class);
+            Intent intent = new Intent(getApplicationContext(), RegisterFragment.class);
             startActivity(intent);
             finish();
-        }else{
+        }
             binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 
@@ -57,4 +58,3 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-}
