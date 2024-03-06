@@ -32,12 +32,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.androidmaps.databinding.FragmentDashboardBinding;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -51,8 +48,7 @@ public class DashboardFragment extends Fragment {
     private ImageButton photo, flipCamera;
     private ImageView minatura;
     private Uri lastPhotoUri;
-    private FirebaseStorage storage;
-    private StorageReference storageReference;
+    private FirebaseFirestore firestore;
     private int cameraFacing = CameraSelector.LENS_FACING_BACK;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
@@ -67,11 +63,10 @@ public class DashboardFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         DashboardViewModel dashboardViewModel =
                 new ViewModelProvider(this).get(DashboardViewModel.class);
+        firestore = FirebaseFirestore.getInstance();
 
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
         previewView = binding.preview;
         photo = binding.photo;
         minatura= binding.imageView2;
@@ -179,8 +174,9 @@ public class DashboardFragment extends Fragment {
                         minatura.setImageURI(saveURI);
                         minatura.setTag(saveURI);
                         lastPhotoUri = saveURI;
-                        uploadImageToFirebaseStorage(saveURI);
+                        uploadImageToFirestore(saveURI);
                     }
+
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
@@ -188,28 +184,28 @@ public class DashboardFragment extends Fragment {
                     }
                 });
     }
-    private void uploadImageToFirebaseStorage(Uri imageUri) {
+    private void uploadImageToFirestore(Uri imageUri) {
         if (imageUri == null) {
             Toast.makeText(requireContext(), "La URI de la imagen es nula", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageName = "image_" + timestamp + ".jpg";
-
-        StorageReference imageRef = storageReference.child("images/" + imageName);
-
-        imageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    Toast.makeText(requireContext(), "Imagen subida exitosamente a Firebase Storage", Toast.LENGTH_SHORT).show();
-                    // Aquí puedes obtener la URL de descarga de la imagen subida
-                    // imageRef.getDownloadUrl().addOnSuccessListener...
+        firestore.collection("cameramaps-344dd.appspot.com")
+                .add(getImageData(imageUri)) // Agrega los datos de la imagen
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(requireContext(), "Imagen subida exitosamente a Firestore", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(requireContext(), "Error al subir la imagen a Firebase Storage: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Error al subir la imagen a Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
+    private Map<String, Object> getImageData(Uri imageUri) {
+        Map<String, Object> imageData = new HashMap<>();
+
+        imageData.put("imageUri", imageUri.toString());
+        return imageData;
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
