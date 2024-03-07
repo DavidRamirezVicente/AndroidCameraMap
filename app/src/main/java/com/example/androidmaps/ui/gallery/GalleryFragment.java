@@ -33,29 +33,22 @@ public class GalleryFragment extends Fragment {
         View root = binding.getRoot();
 
         recyclerView = binding.recyclerView;
-        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 3)); // Mostrar 3 columnas
+        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 3));
         recyclerView.setAdapter(new PhotoAdapter());
 
-        // Obtener referencia al FirebaseStorage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
 
-        // Aquí debes tener una referencia a la carpeta en Firebase Storage donde están almacenadas tus fotos
         StorageReference imagesRef = storageRef.child("images");
 
-        // Listar los elementos dentro de la carpeta "images"
         imagesRef.listAll().addOnSuccessListener(listResult -> {
             for (StorageReference item : listResult.getItems()) {
-                // Obtener la URL de descarga de cada imagen
                 item.getDownloadUrl().addOnSuccessListener(uri -> {
-                    // Agregar la URL de la imagen a la lista
                     photoUris.add(uri);
-                    // Notificar al adaptador que se han añadido nuevos datos
                     recyclerView.getAdapter().notifyDataSetChanged();
                 });
             }
         }).addOnFailureListener(e -> {
-            // Manejar el error si la lista de imágenes no se puede recuperar
         });
 
         return root;
