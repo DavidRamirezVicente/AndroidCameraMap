@@ -2,9 +2,7 @@ package com.example.androidmaps.ui.dashboard;
 
 import android.Manifest;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,7 +29,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.androidmaps.MapsFragment;
 import com.example.androidmaps.databinding.FragmentDashboardBinding;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,7 +41,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class DashboardFragment extends Fragment {
@@ -183,21 +179,6 @@ public class DashboardFragment extends Fragment {
                         minatura.setImageURI(saveURI);
                         minatura.setTag(saveURI);
                         lastPhotoUri = saveURI;
-
-                        // Aquí se obtienen las coordenadas de la foto
-                        double[] coordinates = getPhotoCoordinates(saveURI);
-                        if (coordinates != null) {
-                            double latitude = coordinates[0];
-                            double longitude = coordinates[1];
-                            // Ahora puedes utilizar la latitud y longitud como desees
-                            // Por ejemplo, puedes abrir una nueva actividad para mostrar un mapa con estas coordenadas
-                            Intent intent = new Intent(requireContext(), MapsFragment.class);
-                            intent.putExtra("latitude", latitude);
-                            intent.putExtra("longitude", longitude);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(requireContext(), "No se encontraron coordenadas de ubicación en la foto", Toast.LENGTH_SHORT).show();
-                        }
                         uploadImageToFirebaseStorage(saveURI);
                     }
 
@@ -231,24 +212,6 @@ public class DashboardFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     Toast.makeText(requireContext(), "Error al subir la imagen a Firebase Storage: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
-    }
-    private double[] getPhotoCoordinates(Uri photoUri) {
-        double[] coordinates = new double[2]; // [0]: latitud, [1]: longitud
-        try {
-            ExifInterface exifInterface = new ExifInterface(Objects.requireNonNull(photoUri.getPath()));
-            float[] latLong = new float[2];
-            boolean hasLatLong = exifInterface.getLatLong(latLong);
-            if (hasLatLong) {
-                coordinates[0] = latLong[0];
-                coordinates[1] = latLong[1];
-                return coordinates;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     @Override

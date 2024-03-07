@@ -14,12 +14,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
-import com.example.androidmaps.MainActivity;
 import com.example.androidmaps.R;
-import com.example.androidmaps.ui.dashboard.DashboardFragment;
+import com.example.androidmaps.ui.camera.CameraFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -57,18 +54,27 @@ public class RegisterFragment extends Fragment {
                     Toast.makeText(getActivity(), "Enter password", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                mAuth.signInWithEmailAndPassword(email,password)
+                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(getActivity(), "Login successfully.", Toast.LENGTH_SHORT).show();
+                                            navigateToDashboard();
+                                        } else {
+                                            Log.w("RegisterFragment", "createUserWithEmail:failure", task.getException());
+                                            Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(getActivity(), "Authentication created.", Toast.LENGTH_SHORT).show();
-                                    // Navigate to DashboardFragment upon successful authentication
-                                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                                    navController.navigate(R.id.navigation_dashboard);
+                                    navigateToDashboard();
                                 } else {
-                                    // If sign in fails, display a message to the user.
                                     Log.w("RegisterFragment", "createUserWithEmail:failure", task.getException());
                                     Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 }
@@ -79,4 +85,13 @@ public class RegisterFragment extends Fragment {
 
         return view;
     }
+    private void navigateToDashboard() {
+        if (getActivity() != null) {
+            Intent intent = new Intent(getActivity(), CameraFragment.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
+    }
+
+
 }

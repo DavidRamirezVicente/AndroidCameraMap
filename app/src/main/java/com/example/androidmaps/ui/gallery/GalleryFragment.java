@@ -1,7 +1,5 @@
-package com.example.androidmaps.ui.notifications;
+package com.example.androidmaps.ui.gallery;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,16 +13,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.androidmaps.databinding.FragmentNotificationsBinding;
+import com.example.androidmaps.databinding.FragmentGalleryBinding;
 import com.example.androidmaps.ui.SharedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class NotificationsFragment extends Fragment {
+public class GalleryFragment extends Fragment {
 
-    private FragmentNotificationsBinding binding;
+    private FragmentGalleryBinding binding;
     private SharedViewModel sharedViewModel;
     private ImageView imageView;
     private LinearLayout linearLayout;
@@ -33,10 +31,10 @@ public class NotificationsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        NotificationsViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
+        GalleryViewModel galleryViewModel =
+                new ViewModelProvider(this).get(GalleryViewModel.class);
 
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        binding = FragmentGalleryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         imageView = binding.imageView;
 
