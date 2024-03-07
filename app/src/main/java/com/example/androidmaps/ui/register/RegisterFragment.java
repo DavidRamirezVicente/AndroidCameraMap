@@ -14,9 +14,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.androidmaps.MainActivity;
 import com.example.androidmaps.R;
+import com.example.androidmaps.ui.dashboard.DashboardFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -61,9 +64,9 @@ public class RegisterFragment extends Fragment {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(getActivity(), "Authentication created.", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
+                                    // Navigate to DashboardFragment upon successful authentication
+                                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                                    navController.navigate(R.id.navigation_dashboard);
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w("RegisterFragment", "createUserWithEmail:failure", task.getException());

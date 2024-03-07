@@ -28,13 +28,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
-        if (user == null) {
-            Intent intent = new Intent(getApplicationContext(), RegisterFragment.class);
-            startActivity(intent);
-            finish();
-        }
+
             binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
+
+        if (user == null) {
+            // User is not logged in, navigate to the RegisterFragment
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.navigation_register);
+        }
 
             BottomNavigationView navView = findViewById(R.id.nav_view);
             // Passing each menu ID as a set of Ids because each
