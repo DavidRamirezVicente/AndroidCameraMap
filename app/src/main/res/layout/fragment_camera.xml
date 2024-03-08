@@ -40,7 +40,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="585dp" />
+            android:layout_height="506dp" />
 
         <LinearLayout
             android:layout_width="match_parent"

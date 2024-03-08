@@ -53,6 +53,7 @@ public class CameraFragment extends Fragment {
     private Uri lastPhotoUri;
     private FirebaseStorage storage;
     private StorageReference storageReference;
+    private FirebaseFirestore db;
     private int cameraFacing = CameraSelector.LENS_FACING_BACK;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
@@ -65,10 +66,12 @@ public class CameraFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        requestCameraPermission();
         CameraViewModel dashboardViewModel =
                 new ViewModelProvider(this).get(CameraViewModel.class);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+        db = FirebaseFirestore.getInstance();
 
         binding = FragmentCameraBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -91,7 +94,6 @@ public class CameraFragment extends Fragment {
             }
         });
         flipCamera.setOnClickListener(view -> {
-
             cameraFacing = (cameraFacing == CameraSelector.LENS_FACING_BACK) ?
                     CameraSelector.LENS_FACING_FRONT : CameraSelector.LENS_FACING_BACK;
             startCamera(cameraFacing);
@@ -99,29 +101,15 @@ public class CameraFragment extends Fragment {
 
         return root;
     }
+
     private boolean hasCameraPermission() {
         return ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasAudioPermission() {
-        return ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasWriteExternalStoragePermission() {
-        return ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestCameraPermission() {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA);
     }
 
-    private void requestAudioPermission() {
-        requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
-    }
-
-    private void requestWriteExternalStoragePermission() {
-        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-    }
     private void startCamera(int cameraFacing) {
         ListenableFuture<ProcessCameraProvider> processCameraProviderListenableFuture = ProcessCameraProvider.getInstance(requireContext());
         processCameraProviderListenableFuture.addListener(new Runnable() {
@@ -146,14 +134,8 @@ public class CameraFragment extends Fragment {
                 }
             }
         }, ContextCompat.getMainExecutor(requireContext()));
-        /*if (lastPhotoUri != null) {
-            minatura.setVisibility(View.VISIBLE);
-            minatura.setImageURI(lastPhotoUri);
-            minatura.setTag(lastPhotoUri);
-        } else {
-            minatura.setVisibility(View.GONE);
-        }*/
     }
+
     private void capturePhoto() {
         if (imageCapture == null) {
             Toast.makeText(requireContext(), "Error: ImageCapture no está disponible", Toast.LENGTH_SHORT).show();
@@ -189,31 +171,52 @@ public class CameraFragment extends Fragment {
                     }
                 });
     }
+
     private void uploadImageToFirebaseStorage(Uri imageUri) {
         if (imageUri == null) {
             Toast.makeText(requireContext(), "La URI de la imagen es nula", Toast.LENGTH_SHORT).show();
             return;
         }
 
-
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageName = "image_" + timestamp + ".jpg";
 
-
-
         StorageReference imageRef = storageReference.child("images/" + imageName);
-
 
         imageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     Toast.makeText(requireContext(), "Imagen subida exitosamente a Firebase Storage", Toast.LENGTH_SHORT).show();
-                    // Aquí puedes obtener la URL de descarga de la imagen subida
-                    // imageRef.getDownloadUrl().addOnSuccessListener...
+
+                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+
+                        double latitude = 0.0;
+                        double longitude = 0.0;
+                        saveImageMetadataToFirestore(imageName, latitude, longitude);
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(requireContext(), "Error al obtener la URL de descarga de la imagen: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(requireContext(), "Error al subir la imagen a Firebase Storage: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+
     }
+
+    private void saveImageMetadataToFirestore(String imageName, double latitude, double longitude) {
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("latitude", latitude);
+        metadata.put("longitude", longitude);
+
+        db.collection("imagesMetadata").document(imageName)
+                .set(metadata)
+                .addOnSuccessListener(aVoid -> {
+                })
+                .addOnFailureListener(e -> {
+                });
+    }
+
+
 
     @Override
     public void onDestroyView() {
