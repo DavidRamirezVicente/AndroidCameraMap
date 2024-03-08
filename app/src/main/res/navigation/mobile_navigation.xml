@@ -26,14 +26,14 @@
         android:id="@+id/navigation_register"
         android:name="com.example.androidmaps.ui.register.RegisterFragment"
         android:label="activity_register"
-        tools:layout="@layout/fragment_home">
+        tools:layout="@layout/activity_register">
         <action
-            android:id="@+id/action_navigation_register_to_navigation_dashboard"
+            android:id="@+id/action_navigation_register_to_navigation_dashboard2"
             app:destination="@id/navigation_dashboard" />
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
-        android:name="com.example.androidmaps.MapsFragment"
+        android:name="com.example.androidmaps.ui.maps.MapsFragment"
         android:label="fragment_maps"
         tools:layout="@layout/fragment_maps" />
 
