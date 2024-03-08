@@ -1,14 +1,33 @@
 {
   "project_info": {
-    "project_number": "185225219289",
-    "firebase_url": "https://cameramaps-344dd-default-rtdb.firebaseio.com",
-    "project_id": "cameramaps-344dd",
-    "storage_bucket": "cameramaps-344dd.appspot.com"
+    "project_number": "126477083870",
+    "firebase_url": "https://androidfirebase-f48f2-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "androidfirebase-f48f2",
+    "storage_bucket": "androidfirebase-f48f2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:185225219289:android:143519ce3588841e27c2c8",
+        "mobilesdk_app_id": "1:126477083870:android:3f15e118b1b93ff6c10e4f",
+        "android_client_info": {
+          "package_name": "com.example.androidfirebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ_AwElUclYTIUdpxkNVQtgceh0mnrcQU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126477083870:android:39c3be8b13ad4d77c10e4f",
         "android_client_info": {
           "package_name": "com.example.androidmaps"
         }
@@ -16,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDQfYP7KCtC8zpwQh0potTmlPdqfjPcJmE"
+          "current_key": "AIzaSyAQ_AwElUclYTIUdpxkNVQtgceh0mnrcQU"
         }
       ],
       "services": {

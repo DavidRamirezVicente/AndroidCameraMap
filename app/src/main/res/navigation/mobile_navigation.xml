@@ -28,8 +28,8 @@
         android:label="activity_register"
         tools:layout="@layout/activity_register">
         <action
-            android:id="@+id/action_navigation_register_to_navigation_dashboard2"
-            app:destination="@id/navigation_dashboard" />
+            android:id="@+id/action_navigation_register_to_navigation_dashboard"
+            app:destination="@id/navigation_home" />
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"

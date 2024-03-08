@@ -1,12 +1,16 @@
 package com.example.androidmaps.ui.camera;
-
 import android.Manifest;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +59,10 @@ public class CameraFragment extends Fragment {
     private StorageReference storageReference;
     private FirebaseFirestore db;
     private int cameraFacing = CameraSelector.LENS_FACING_BACK;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+
 
     private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -66,33 +74,30 @@ public class CameraFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentCameraBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+        previewView = binding.preview;
+        photo = binding.photo;
+        minatura = binding.imageView2;
+        minatura.setVisibility(View.INVISIBLE);
+        flipCamera = binding.rotate;
+
         requestCameraPermission();
+        requestLocationPermission();
+
         CameraViewModel dashboardViewModel =
                 new ViewModelProvider(this).get(CameraViewModel.class);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         db = FirebaseFirestore.getInstance();
 
-        binding = FragmentCameraBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        previewView = binding.preview;
-        photo = binding.photo;
-        minatura= binding.imageView2;
-        minatura.setVisibility(View.INVISIBLE);
-        flipCamera = binding.rotate;
-
-        startCamera(cameraFacing);
-
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (hasCameraPermission()){
-                    capturePhoto();
-                }else {
-                    requestCameraPermission();
-                }
+                capturePhoto();
             }
         });
+
         flipCamera.setOnClickListener(view -> {
             cameraFacing = (cameraFacing == CameraSelector.LENS_FACING_BACK) ?
                     CameraSelector.LENS_FACING_FRONT : CameraSelector.LENS_FACING_BACK;
@@ -108,6 +113,16 @@ public class CameraFragment extends Fragment {
 
     private void requestCameraPermission() {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+    }
+
+    private boolean hasLocationPermission() {
+        return ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestLocationPermission() {
+        if (!hasLocationPermission()) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        }
     }
 
     private void startCamera(int cameraFacing) {
@@ -137,11 +152,52 @@ public class CameraFragment extends Fragment {
     }
 
     private void capturePhoto() {
+        if(!hasCameraPermission()){
+            requestCameraPermission();
+            return;
+        }
+        if (!hasLocationPermission()) {
+            requestLocationPermission();
+            return;
+        }
+
         if (imageCapture == null) {
             Toast.makeText(requireContext(), "Error: ImageCapture no está disponible", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                locationManager.removeUpdates(this); // Detiene las actualizaciones de ubicación
+                takePictureWithLocation(latitude, longitude);
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+    }
+
+    private void takePictureWithLocation(double latitude, double longitude) {
         String name = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSS", Locale.getDefault()).format(System.currentTimeMillis());
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
@@ -161,18 +217,17 @@ public class CameraFragment extends Fragment {
                         minatura.setImageURI(saveURI);
                         minatura.setTag(saveURI);
                         lastPhotoUri = saveURI;
-                        uploadImageToFirebaseStorage(saveURI);
+                        uploadImageToFirebaseStorage(saveURI, latitude, longitude);
                     }
-
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
-                        Toast.makeText(requireContext(), "Error al guardar la foto: ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Error al guardar la foto: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private void uploadImageToFirebaseStorage(Uri imageUri) {
+    private void uploadImageToFirebaseStorage(Uri imageUri, double latitude, double longitude) {
         if (imageUri == null) {
             Toast.makeText(requireContext(), "La URI de la imagen es nula", Toast.LENGTH_SHORT).show();
             return;
@@ -190,8 +245,7 @@ public class CameraFragment extends Fragment {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String downloadUrl = uri.toString();
 
-                        double latitude = 0.0;
-                        double longitude = 0.0;
+                        // Guardar los metadatos en Firestore
                         saveImageMetadataToFirestore(imageName, latitude, longitude);
                     }).addOnFailureListener(e -> {
                         Toast.makeText(requireContext(), "Error al obtener la URL de descarga de la imagen: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -200,8 +254,8 @@ public class CameraFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     Toast.makeText(requireContext(), "Error al subir la imagen a Firebase Storage: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
-
     }
+
 
     private void saveImageMetadataToFirestore(String imageName, double latitude, double longitude) {
         Map<String, Object> metadata = new HashMap<>();
@@ -211,8 +265,10 @@ public class CameraFragment extends Fragment {
         db.collection("imagesMetadata").document(imageName)
                 .set(metadata)
                 .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(requireContext(), "Metadatos guardados exitosamente en Firestore", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Error al guardar los metadatos en Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
