@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+    id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+
 }
 
 android {
@@ -44,6 +46,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.navigation:navigation-fragment:2.7.7")
     implementation("androidx.navigation:navigation-ui:2.7.7")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -62,4 +65,7 @@ dependencies {
     implementation("androidx.camera:camera-extensions:1.3.1")
     implementation("androidx.camera:camera-viewfinder:1.4.0-alpha04")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+
 }
