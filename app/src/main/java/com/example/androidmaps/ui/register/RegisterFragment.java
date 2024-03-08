@@ -14,11 +14,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 
-import com.example.androidmaps.MainActivity;
 import com.example.androidmaps.R;
-import com.example.androidmaps.ui.dashboard.DashboardFragment;
+import com.example.androidmaps.ui.camera.CameraFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -89,7 +87,7 @@ public class RegisterFragment extends Fragment {
     }
     private void navigateToDashboard() {
         if (getActivity() != null) {
-            Intent intent = new Intent(getActivity(), DashboardFragment.class);
+            Intent intent = new Intent(getActivity(), CameraFragment.class);
             startActivity(intent);
             getActivity().finish();
         }

@@ -1,4 +1,4 @@
-package com.example.androidmaps.ui.home;
+package com.example.androidmaps.ui.maps;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.androidmaps.R;
-import com.example.androidmaps.databinding.FragmentHomeBinding;
+import com.example.androidmaps.databinding.FragmentMapsBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -17,14 +17,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback {
+public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
-    private FragmentHomeBinding binding;
+    private FragmentMapsBinding binding;
     private GoogleMap mMap;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentMapsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()

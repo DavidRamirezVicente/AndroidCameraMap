@@ -1,4 +1,4 @@
-package com.example.androidmaps.ui.dashboard;
+package com.example.androidmaps.ui.camera;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -29,23 +29,20 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.androidmaps.databinding.FragmentDashboardBinding;
+import com.example.androidmaps.databinding.FragmentCameraBinding;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class DashboardFragment extends Fragment {
+public class CameraFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentCameraBinding binding;
     private PreviewView previewView;
     private ImageCapture imageCapture;
     private ImageButton photo, flipCamera;
@@ -65,12 +62,12 @@ public class DashboardFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        CameraViewModel cameraViewModel =
+                new ViewModelProvider(this).get(CameraViewModel.class);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentCameraBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         previewView = binding.preview;
         photo = binding.photo;
@@ -138,7 +135,7 @@ public class DashboardFragment extends Fragment {
                     provider.unbindAll();
 
                     CameraSelector cameraSelector = new CameraSelector.Builder().requireLensFacing(cameraFacing).build();
-                    Camera camera = provider.bindToLifecycle(DashboardFragment.this, cameraSelector, preview, imageCapture);
+                    Camera camera = provider.bindToLifecycle(CameraFragment.this, cameraSelector, preview, imageCapture);
 
 
                 } catch (ExecutionException | InterruptedException e) {
