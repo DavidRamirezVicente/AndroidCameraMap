@@ -6,22 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.gallery.GalleryFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutHorizontal"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" >
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"/>
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
