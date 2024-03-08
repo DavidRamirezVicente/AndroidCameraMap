@@ -16,6 +16,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,6 +52,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
 
         db.collection("imagesMetadata").get()
                 .addOnCompleteListener(task -> {
@@ -62,11 +64,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             if (latitude != null && longitude != null) {
                                 LatLng imageLocation = new LatLng(latitude, longitude);
                                 mMap.addMarker(new MarkerOptions().position(imageLocation).title("Imagen"));
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(imageLocation, 15));
+                                boundsBuilder.include(imageLocation);
                             }
                         }
-                    } else {
+
+                        LatLngBounds bounds = boundsBuilder.build();
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
                     }
                 });
     }
+
 }

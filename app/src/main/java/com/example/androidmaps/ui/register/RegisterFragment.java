@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterFragment extends Fragment {
 
-    private TextInputEditText editTextEmail, editTextPassword;
+    private EditText editTextEmail, editTextPassword;
     private Button registerButton;
     private  Button loginButton;
     private FirebaseAuth mAuth;
