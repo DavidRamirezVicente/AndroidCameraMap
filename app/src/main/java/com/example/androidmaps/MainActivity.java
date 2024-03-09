@@ -1,8 +1,6 @@
 package com.example.androidmaps;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.example.androidmaps.ui.register.RegisterFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -30,13 +28,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
-        if (user == null) {
-            // Start RegisterFragment using FragmentTransaction
-            getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new RegisterFragment())
-                    .commit();
-            return; // Exit onCreate method to prevent further execution
-        }
             binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 
@@ -44,11 +35,11 @@ public class MainActivity extends AppCompatActivity {
             // Passing each menu ID as a set of Ids because each
             // menu should be considered as top level destinations.
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                    R.id.navigation_maps, R.id.navigation_camera, R.id.navigation_gallery,R.id.navigation_register)
                     .build();
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-            NavigationUI.setupWithNavController(binding.navView, navController);
+            NavigationUI.setupWithNavController(navView, navController);
         FirebaseApp.initializeApp(this);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 

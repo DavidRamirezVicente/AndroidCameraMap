@@ -136,7 +136,7 @@ public class RegisterFragment extends Fragment {
     private void navigateToCameraFragment() {
         if (getActivity() != null) {
             NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.navigation_dashboard); // Replace with your CameraFragment ID in the navigation graph
+            navController.navigate(R.id.navigation_camera); // Replace with your CameraFragment ID in the navigation graph
         }
     }
 
